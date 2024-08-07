@@ -1,3 +1,11 @@
+const doctors = [
+    { id: 1, name: "Dr. John Smith", specialty: "Cardiology", availability: ["Monday", "Wednesday", "Friday"] },
+    { id: 2, name: "Dr. Sarah Johnson", specialty: "Pediatrics", availability: ["Tuesday", "Thursday", "Saturday"] },
+    { id: 3, name: "Dr. Michael Williams", specialty: "Orthopedics", availability: ["Monday", "Tuesday", "Friday"] },
+    { id: 4, name: "Dr. Emily Brown", specialty: "Dermatology", availability: ["Wednesday", "Thursday", "Friday"] },
+    { id: 5, name: "Dr. David Lee", specialty: "Neurology", availability: ["Monday", "Wednesday", "Saturday"] }
+];
+
 function searchDoctors() {
     const searchTerm = document.getElementById('doctorSearch').value.toLowerCase();
     const doctorResults = document.getElementById('doctorResults');
@@ -30,19 +38,36 @@ function bookAppointment(doctorId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const appointmentForm = document.getElementById('appointmentForm');
-    if (appointmentForm) {
-        appointmentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Appointment booked successfully!');
-            appointmentForm.reset();
+function displayFeaturedDoctors() {
+    const featuredDoctors = doctors.slice(0, 3); // Display first 3 doctors
+    const container = document.getElementById('featuredDoctors');
+    if (container) {
+        container.innerHTML = ''; // Clear existing content
+        featuredDoctors.forEach(doctor => {
+            container.innerHTML += `
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">${doctor.name}</h5>
+                            <p class="card-text">${doctor.specialty}</p>
+                            <a href="doctors.html" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            `;
         });
+    } else {
+        console.error('Featured doctors container not found');
     }
-});
-
+}
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on the home page
+    if (document.getElementById('featuredDoctors')) {
+        displayFeaturedDoctors();
+    }
+    
+    // Check if we're on the appointment page
     const appointmentForm = document.getElementById('appointmentForm');
     if (appointmentForm) {
         const selectedDoctor = JSON.parse(localStorage.getItem('selectedDoctor'));
@@ -67,33 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('selectedDoctor');
         });
     }
-});
 
-function displayFeaturedDoctors() {
-    const featuredDoctors = doctors.slice(0, 3); // Display first 3 doctors
-    const container = document.getElementById('featuredDoctors');
-    if (container) {
-        featuredDoctors.forEach(doctor => {
-            container.innerHTML += `
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">${doctor.name}</h5>
-                            <p class="card-text">${doctor.specialty}</p>
-                            <a href="doctors.html" class="btn btn-primary">Book Now</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
+    // Check if we're on the doctors search page
+    const doctorSearchInput = document.getElementById('doctorSearch');
+    if (doctorSearchInput) {
+        // Add event listener for real-time search
+        doctorSearchInput.addEventListener('input', searchDoctors);
     }
-}
-
-document.addEventListener('DOMContentLoaded', displayFeaturedDoctors);
-
-const doctors = [
-    { id: 1, name: "Dr. John Smith", specialty: "Cardiology", availability: ["Monday", "Wednesday", "Friday"] },
-    { id: 2, name: "Dr. Sarah Johnson", specialty: "Pediatrics", availability: ["Tuesday", "Thursday", "Saturday"] },
-    { id: 3, name: "Dr. Michael Williams", specialty: "Orthopedics", availability: ["Monday", "Tuesday", "Friday"] },
-    // Add more doctors as needed
-];
+});

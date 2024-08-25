@@ -1,10 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Andika&display=swap');
 
-:root {
+/* :root {
     --black: black;
     --light-color: #666;
     --box-shadow: 2px 2px 12px grey;
     --border: 2rem solid rgba(0, 0, 0, 0.1);
+} */
+
+:root{
+    --black: black;
+    --purple: purple;
+    --dark-moderate-violet:#663399;
+    --light-color: #666;
+    --box-shadow: 2px 2px 12px grey;
+    --border: 2rem solid rgba(0,0,0,.1);
 }
 
 * {
@@ -16,7 +25,7 @@
     outline: none;
     text-decoration: none;
     text-transform: none;
-    transition: all 0.2s linear;
+    transition: all .2s linear;
 }
 
 html {
@@ -55,17 +64,18 @@ body {
 }
 
 .header .logo img {
-    margin-top: 5px;
-    height: 90px;
-    width: auto;
+    margin-top: 10px;
+    height: 100%;
+    width: 65%;
     display: inline-block;
 }
 
 .header .headbar a {
     font-size: 1.7rem;
-    border-radius: 5rem;
+    border-radius: .5rem;
     padding: 0.5rem 1.5rem;
     color: var(--light-color);
+    transition: all .3s linear;
 }
 
 .header .headbar a:hover {
@@ -85,6 +95,7 @@ body {
     border: none;
     background-image: linear-gradient(to right, #649bff, #0070fa, #649bff);
     border-radius: 10px;
+    transition: all .3s linear;
 }
 
 /* Form */

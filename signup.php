@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "medinet";
+$password = "medinet";
 $dbname = "MEDINET";
 
 $conn = new mysqli($servername, $username, $password, $dbname);

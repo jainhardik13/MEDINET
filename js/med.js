@@ -2,7 +2,7 @@ let searchForm = document.querySelector('.search-form');
 
 document.querySelector('#search-btn').onclick = () =>
 {
-    searchform.classList.toggle('active');
+    searchForm.classList.toggle('active');
     shoppingCart.classList.remove('active');
     uploadForm.classList.remove('active');
 }
@@ -28,7 +28,7 @@ function active(){
 }
 defaultBtn.addEventListener("change",function(){
     if(this.value){
-        let nameValue = this.value.match(RegExp);
+        let nameValue = this.value.match(regExp);
         fileName.textContent = nameValue;
     }
 });

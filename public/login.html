@@ -26,14 +26,40 @@
         .show-signup .signup-side {
             transform: translateX(-100%);
         }
+        .user-widget {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .user-widget:hover {
+            transform: translateX(-5px);
+        }
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        .auth-forms {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .auth-forms.hidden {
+            display: none;
+            opacity: 0;
+        }
     </style>
 </head>
 <body class="bg-blue-50 flex flex-col min-h-screen">
     <nav class="flex items-center shadow-2xl bg-white">
-        <a href="/index.html"><img src="images/logo.jpg" class="w-44 cursor-pointer py-3 px-2"></a>
+        <a href="/index.html"><img src="images/logo.jpg" class="w-44 cursor-pointer py-3 px-2" alt="Logo"></a>
         <ul class="flex-1 text-center">
             <li class="list-none inline-block px-4"><a href="index.html" class="px-2 hover:text-blue-400">Home</a></li>
-            <li class="list-none inline-block px-4"><a href="login.html" class="px-2 hover:text-blue-400">login</a></li>
+            <li class="list-none inline-block px-4"><a href="login.html" class="px-2 hover:text-blue-400">Login</a></li>
             <li class="list-none inline-block px-4"><a href="doc.html" class="px-2 hover:text-blue-400">Doctors</a></li>
             <li class="list-none inline-block px-4"><a href="med.html" class="px-2 hover:text-blue-400">Medicine</a></li>
             <li class="list-none inline-block px-4"><a href="service.html" class="px-2 hover:text-blue-400">Service</a></li>
@@ -42,7 +68,22 @@
         <button class="cursor-pointer mr-10 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">HELPLINE</button>
     </nav>
 
-    <div class="flex-grow flex items-center justify-center">
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-notification bg-green-500 text-white"></div>
+
+    <!-- User Widget -->
+    <div id="userWidget" class="user-widget hidden">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-64">
+            <div class="flex items-center justify-between mb-4">
+                <span id="userGreeting" class="font-bold"></span>
+                <button onclick="logout()" class="text-red-500 hover:text-red-700">Logout</button>
+            </div>
+            <p class="text-sm text-gray-600">You are logged in successfully!</p>
+        </div>
+    </div>
+
+    <!-- Auth Forms Container -->
+    <div id="authForms" class="flex-grow flex items-center justify-center auth-forms">
         <div class="bg-white rounded-lg shadow-lg overflow-hidden flex max-w-4xl w-full login-container">
             <!-- Login Side -->
             <div class="w-full flex login-side">
@@ -58,13 +99,13 @@
                         <input type="text" name="username" placeholder="Username" class="w-full p-2 mb-4 border rounded" required>
                         <input type="password" name="password" placeholder="Password" class="w-full p-2 mb-4 border rounded" required>
                         <a href="#" class="text-sm text-blue-500 block mb-4">Forgot your password?</a>
-                        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">SIGN IN</button>
+                        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">SIGN IN</button>
                     </form>
                 </div>
                 <div class="w-1/2 bg-blue-300 p-8 text-white flex flex-col items-center justify-center">
                     <h2 class="text-3xl font-bold mb-4">Hello, User!</h2>
                     <p class="mb-8 text-center">Enter your personal details and start your journey with us</p>
-                    <button id="showSignUpBtn" class="border-2 border-white text-white px-8 py-2 rounded-full">SIGN UP</button>
+                    <button id="showSignUpBtn" class="border-2 border-white text-white px-8 py-2 rounded-full hover:bg-white hover:text-blue-300">SIGN UP</button>
                 </div>
             </div>
             
@@ -73,7 +114,7 @@
                 <div class="w-1/2 bg-blue-300 p-8 text-white flex flex-col items-center justify-center">
                     <h2 class="text-3xl font-bold mb-4">Welcome Back!</h2>
                     <p class="mb-8 text-center">To keep connected with us please login with your personal info</p>
-                    <button id="showLoginBtn" class="border-2 border-white text-white px-8 py-2 rounded-full">SIGN IN</button>
+                    <button id="showLoginBtn" class="border-2 border-white text-white px-8 py-2 rounded-full hover:bg-white hover:text-blue-300">SIGN IN</button>
                 </div>
                 <div class="w-1/2 p-8">
                     <h2 class="text-2xl font-bold mb-4">Create Account</h2>
@@ -87,7 +128,7 @@
                         <input type="text" name="username" placeholder="Username" class="w-full p-2 mb-4 border rounded" required>
                         <input type="email" name="email" placeholder="Email" class="w-full p-2 mb-4 border rounded" required>
                         <input type="password" name="password" placeholder="Password" class="w-full p-2 mb-4 border rounded" required>
-                        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">SIGN UP</button>
+                        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">SIGN UP</button>
                     </form>
                 </div>
             </div>
@@ -101,77 +142,159 @@
             const showSignUpBtn = document.getElementById('showSignUpBtn');
             const showLoginBtn = document.getElementById('showLoginBtn');
             const loginContainer = document.querySelector('.login-container');
+            const userWidget = document.getElementById('userWidget');
+            const userGreeting = document.getElementById('userGreeting');
+            const toastNotification = document.getElementById('toastNotification');
+            const authForms = document.getElementById('authForms');
 
+            // Check if user is already logged in
+            const checkAuthStatus = () => {
+                const user = localStorage.getItem('user');
+                if (user) {
+                    updateUserWidget();
+                    authForms.classList.add('hidden');
+                }
+            };
+
+            checkAuthStatus();
+
+            function showToast(message, isSuccess = true) {
+                toastNotification.textContent = message;
+                toastNotification.style.display = 'block';
+                toastNotification.className = `toast-notification ${isSuccess ? 'bg-green-500' : 'bg-red-500'} text-white`;
+                
+                setTimeout(() => {
+                    toastNotification.style.display = 'none';
+                }, 3000);
+            }
+
+            function updateUserWidget() {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user) {
+                    userGreeting.textContent = `Hello, ${user.username}!`;
+                    userWidget.classList.remove('hidden');
+                    authForms.classList.add('hidden');
+                } else {
+                    userWidget.classList.add('hidden');
+                    authForms.classList.remove('hidden');
+                }
+            }
+
+            // Toggle between login and signup forms
+            showSignUpBtn.addEventListener('click', () => {
+                loginContainer.classList.add('show-signup');
+            });
+
+            showLoginBtn.addEventListener('click', () => {
+                loginContainer.classList.remove('show-signup');
+            });
+
+            // Handle login form submission
             loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const username = this.elements.username.value;
                 const password = this.elements.password.value;
-                
-                fetch('/signin', {
+
+                fetch('http://localhost:3000/signin', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password }),
+                    body: JSON.stringify({ username, password })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message === 'Login successful') {
+                    if (data.user) {
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        alert('Logged in successfully!');
-                        // Redirect to home page or dashboard
-                        window.location.href = '/index.html';
+                        showToast('Login successful!');
+                        updateUserWidget();
+                        loginForm.reset();
                     } else {
-                        alert(data.message);
+                        showToast(data.message || 'Login failed', false);
                     }
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('An error occurred during login.');
+                .catch(error => {
+                    console.error('Login error:', error);
+                    showToast('An error occurred during login', false);
                 });
             });
 
+            // Handle signup form submission
             signupForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const username = this.elements.username.value;
                 const email = this.elements.email.value;
                 const password = this.elements.password.value;
 
-                fetch('/signup', {
+                fetch('http://localhost:3000/signup', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, email, password }),
+                    body: JSON.stringify({ username, email, password })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.message);
                     if (data.message === 'User registered successfully') {
+                        showToast('Registration successful! Please login.');
                         loginContainer.classList.remove('show-signup');
+                        signupForm.reset();
+                    } else {
+                        showToast(data.message || 'Registration failed', false);
                     }
                 })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('An error occurred during sign up.');
+                .catch(error => {
+                    console.error('Signup error:', error);
+                    showToast('An error occurred during registration', false);
                 });
             });
 
-            showSignUpBtn.addEventListener('click', function() {
-                loginContainer.classList.add('show-signup');
-            });
+            // Handle logout
+            window.logout = function() {
+                fetch('http://localhost:3000/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Logout failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    localStorage.removeItem('user');
+                    showToast('Logged out successfully!');
+                    updateUserWidget();
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    localStorage.removeItem('user');
+                    showToast('Logged out with some errors', false);
+                    updateUserWidget();
+                });
+            };
 
-            showLoginBtn.addEventListener('click', function() {
-                loginContainer.classList.remove('show-signup');
+            // Check authentication status on page load
+            fetch('http://localhost:3000/user-status', {
+                headers: {
+                    'Authorization': localStorage.getItem('user') ? `Bearer ${JSON.parse(localStorage.getItem('user')).id}` : ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.isAuthenticated) {
+                    localStorage.removeItem('user');
+                    updateUserWidget();
+                }
+            })
+            .catch(error => {
+                console.error('Auth check error:', error);
+                localStorage.removeItem('user');
+                updateUserWidget();
             });
-
-            // Check if user is already logged in
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (user) {
-                alert(`Welcome back, ${user.username}!`);
-                // Redirect to home page or dashboard
-                window.location.href = '/index.html';
-            }
         });
     </script>
 </body>

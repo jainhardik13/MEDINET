@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Auth.css';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => {
@@ -27,7 +29,7 @@ const Auth = () => {
   };
 
   return (
-    <div>
+    <div className="auth-container">
       {isLogin ? (
         <>
           <h2>Login</h2>
@@ -37,15 +39,20 @@ const Auth = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
           <button onClick={handleLogin}>Login</button>
           <p>
-            Don't have an account? <button onClick={() => setIsLogin(false)}>Register</button>
+            Don't have an account? <button className="toggle-button" onClick={() => setIsLogin(false)}>Register</button>
           </p>
         </>
       ) : (
@@ -57,15 +64,20 @@ const Auth = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
           <button onClick={handleRegister}>Register</button>
           <p>
-            Already have an account? <button onClick={() => setIsLogin(true)}>Login</button>
+            Already have an account? <button className="toggle-button" onClick={() => setIsLogin(true)}>Login</button>
           </p>
         </>
       )}
